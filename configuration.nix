@@ -10,6 +10,8 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
+  boot.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+  boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
 
 
   # --- NETZWERK & HOSTNAME ---
@@ -86,6 +88,10 @@
       xfce.thunar       # Datei-Manager
       wofi              # App Launcher (Startmenü)
       waybar            # Statusleiste
+      swaynotificationcenter # Quick Settings & Nachrichten
+      hyprlock              # Der Lockscreen
+      hypridle              # Damit der Lockscreen automatisch angeht
+      libnotify             # Damit Apps Nachrichten senden können
       dunst             # Benachrichtigungen
 
       # Browser
@@ -96,6 +102,8 @@
       bottles           # Windows Apps
       notion-app-enhanced
       git
+      pavucontrol
+      swayosd
     ];
   };
 
