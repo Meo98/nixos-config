@@ -22,6 +22,11 @@
   time.timeZone = "Europe/Zurich"; 
   i18n.defaultLocale = "de_CH.UTF-8";
 
+  # Bluetooth und weiteres
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
+
   # Tastatur auf der Konsole (TTY)
   console.keyMap = "sg"; 
 
@@ -32,10 +37,13 @@
   };
 
   # --- GRAFIK & HYPRLAND ---
-  # Login Manager (SDDM) aktivieren
-  services.displayManager.sddm.enable = true;
-  services.displayManager.sddm.wayland.enable = true;
-
+  # Display Manager (SDDM)
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+    theme = "catppuccin-mocha"; # <--- Hier setzen wir das Theme
+    package = pkgs.kdePackages.sddm; # Nutzen wir die moderne Version
+  };
   # Hyprland aktivieren
   programs.hyprland = {
     enable = true;
@@ -44,6 +52,12 @@
   
   # Zwingt Apps (Electron) auf Wayland
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
+  #Stremio Package
+  nixpkgs.config.permittedInsecurePackages = [
+  "qtwebengine-5.15.19"
+  ];
+
 
   # --- NVIDIA TREIBER (PRIME OFFLOAD) ---
   nixpkgs.config.allowUnfree = true;
@@ -85,6 +99,7 @@
     packages = with pkgs; [
       # GUI Tools
       kitty             # Terminal
+      starship
       xfce.thunar       # Datei-Manager
       wofi              # App Launcher (Startmenü)
       waybar            # Statusleiste
@@ -92,7 +107,15 @@
       hyprlock              # Der Lockscreen
       hypridle              # Damit der Lockscreen automatisch angeht
       libnotify             # Damit Apps Nachrichten senden können
-      dunst             # Benachrichtigungen
+      brightnessctl         # Steuert die Helligkeit
+      blueman               # Bluetooth Manager
+      networkmanagerapplet  # WLAN Manager (nm-connection- editor)
+      helix
+      nil           # Nix Language Server (für deine config.nix!)
+      python3       # Python
+      pyright       # Python Language Server
+      rust-analyzer # Rust
+      wl-clipboard  # WICHTIG für Hyprland Clipboard
 
       # Browser
       google-chrome     # <-- Chrome statt Firefox
@@ -100,11 +123,23 @@
       # Deine Apps
       rclone            # Google Drive
       bottles           # Windows Apps
-      notion-app-enhanced
       git
       pavucontrol
       swayosd
-    ];
+
+
+      # Das neue Stremio Shell Paket:
+      (callPackage ./pkgs/stremio-shell.nix { 
+         libcef = chromium; # Versuchen wir mal 'chromium' statt 'cef', das ist stabiler in NixOS
+      })
+
+      # Das Theme für den Login-Screen
+      (catppuccin-sddm.override {
+        flavor = "mocha";
+        font  = "JetBrainsMono Nerd Font";
+        loginBackground = true;
+     }) 
+   ];
   };
 
   # Fonts
