@@ -53,12 +53,6 @@
   # Zwingt Apps (Electron) auf Wayland
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
-  #Stremio Package
-  nixpkgs.config.permittedInsecurePackages = [
-  "qtwebengine-5.15.19"
-  ];
-
-
   # --- NVIDIA TREIBER (PRIME OFFLOAD) ---
   nixpkgs.config.allowUnfree = true;
   hardware.graphics.enable = true;
@@ -103,6 +97,7 @@
       xfce.thunar       # Datei-Manager
       wofi              # App Launcher (Startmenü)
       waybar            # Statusleiste
+      playerctl
       swaynotificationcenter # Quick Settings & Nachrichten
       hyprlock              # Der Lockscreen
       hypridle              # Damit der Lockscreen automatisch angeht
@@ -116,9 +111,11 @@
       pyright       # Python Language Server
       rust-analyzer # Rust
       wl-clipboard  # WICHTIG für Hyprland Clipboard
+      bitwarden-desktop
 
-      # Browser
-      google-chrome     # <-- Chrome statt Firefox
+      
+      # Der Zen Browser (aus dem Flake Input)
+      inputs.zen-browser.packages."${system}".default    # <-- Chrome statt Firefox
 
       # Deine Apps
       rclone            # Google Drive
@@ -126,13 +123,9 @@
       git
       pavucontrol
       swayosd
+      tidal-hifi
 
-
-      # Das neue Stremio Shell Paket:
-      (callPackage ./pkgs/stremio-shell.nix { 
-         libcef = chromium; # Versuchen wir mal 'chromium' statt 'cef', das ist stabiler in NixOS
-      })
-
+      
       # Das Theme für den Login-Screen
       (catppuccin-sddm.override {
         flavor = "mocha";

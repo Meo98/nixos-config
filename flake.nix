@@ -1,20 +1,23 @@
 {
-  description = "Meos NixOS Flake";
+  description = "NixOS Configuration";
 
   inputs = {
-    # Wir nutzen die Unstable-Version für aktuelles Hyprland & Treiber
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    # --- NEU: Zen Browser Quelle ---
+    zen-browser.url = "github:0xc000022070/zen-browser-flake";
   };
 
   outputs = { self, nixpkgs, ... }@inputs: {
-    nixosConfigurations = {
-      # "nixos" muss mit networking.hostName in configuration.nix übereinstimmen
-      nixos = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          ./configuration.nix
-        ];
-      };
+    nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
+      system = "x86_64-linux";
+      
+      # WICHTIG: Damit wir 'inputs' in der configuration.nix nutzen können!
+      specialArgs = { inherit inputs; }; 
+      
+      modules = [
+        ./configuration.nix
+      ];
     };
   };
 }
