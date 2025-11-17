@@ -29,6 +29,17 @@
   # Tastatur auf der Konsole (TTY)
   console.keyMap = "sg"; 
 
+  services.howdy = {
+    enable = true;
+
+    # adjust to your camera device, check with: v4l2-ctl --list-devices
+    device = "/dev/video0";
+
+    # optional: tune more settings via the module once it’s imported
+    # e.g.:
+    # threshold = 3.5;
+  };
+
   # Tastatur im grafischen System (X11/Wayland)
   services.xserver.xkb = {
     layout = "ch";
@@ -153,12 +164,7 @@
   # Steam
   programs.steam.enable = true;
 
-  # --- Face Unlock ---
-  services.howdy = {
-    enable = true;
-    package = pkgs.howdy; # Stellt sicher, dass das Paket installiert ist
-  };
-  
+   
   # --- BESSERES TERMINAL (ZSH) ---
   programs.zsh = {
     enable = true;
