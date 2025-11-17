@@ -4,7 +4,6 @@
   imports =
     [ # Importiert die Hardware-Erkennung (wichtig!)
       ./hardware-configuration.nix
-      inputs.nixpkgs-unstable.nixosModules.howdy
     ];
 
   # --- BOOTLOADER ---
