@@ -1,10 +1,34 @@
 { config, pkgs, inputs,  ... }:
 
+let
+  # Nixpkgs-Branch mit Howdy-Modul & -Package
+  howdyRepo = builtins.fetchTarball
+    "https://api.github.com/repos/fufexan/nixpkgs/tarball/howdy";
+
+  # Paket-Set aus diesem Repo, mit gleichem System wie dein aktuelles pkgs
+  howdyPkgs = import howdyRepo {
+    system = pkgs.stdenv.hostPlatform.system;
+  };
+in
 {
   imports =
-    [ # Importiert die Hardware-Erkennung (wichtig!)
+    [
+      # Importiert die Hardware-Erkennung (wichtig!)
       ./hardware-configuration.nix
+
+      # Importiert das Howdy-NixOS-Modul
+      "${howdyRepo}/nixos/modules/services/security/howdy/default.nix"
+      # Wenn du den IR-Emitter brauchst, zusätzlich:
+      # "${howdyRepo}/nixos/modules/services/misc/linux-enable-ir-emitter.nix"
     ];
+
+  # Howdy-Pakete aus dem Fork in dein pkgs einhängen
+  nixpkgs.overlays = [
+    (final: prev: {
+      howdy = howdyPkgs.howdy;
+      linux-enable-ir-emitter = howdyPkgs.linux-enable-ir-emitter;
+    })
+  ];
 
   # --- BOOTLOADER ---
   boot.loader.systemd-boot.enable = true;
@@ -31,15 +55,9 @@
 
   services.howdy = {
     enable = true;
-
-    # adjust to your camera device, check with: v4l2-ctl --list-devices
-    device = "/dev/video0";
-
-    # optional: tune more settings via the module once it’s imported
-    # e.g.:
-    # threshold = 3.5;
+    device = "/dev/video0"; # ggf. anpassen, `v4l2-ctl --list-devices`
   };
-
+  
   # Tastatur im grafischen System (X11/Wayland)
   services.xserver.xkb = {
     layout = "ch";
@@ -47,28 +65,21 @@
   };
 
   # --- GRAFIK & HYPRLAND ---
-  # Display Manager (SDDM)
   services.displayManager.sddm = {
     enable = true;
     wayland.enable = true;
-    theme = "catppuccin-mocha"; # <--- Hier setzen wir das Theme
-    package = pkgs.kdePackages.sddm; # Nutzen wir die moderne Version
+    theme = "catppuccin-mocha";
+    package = pkgs.kdePackages.sddm;
   };
-  # Hyprland aktivieren
+
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
   };
 
-    # --- Handy-Verbindung ---
-  programs.kdeconnect = {
-    enable = true;
-  };
-
-  # --- Android Debug Bridge (für Scrcpy) ---
+  programs.kdeconnect.enable = true;
   programs.adb.enable = true;
 
-  # Zwingt Apps (Electron) auf Wayland
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   # --- NVIDIA TREIBER (PRIME OFFLOAD) ---
@@ -79,7 +90,7 @@
   hardware.nvidia = {
     modesetting.enable = true;
     powerManagement.enable = false;
-    powerManagement.finegrained = false; # Wichtig für deinen Laptop Akku!
+    powerManagement.finegrained = false;
     open = false;
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
@@ -89,7 +100,6 @@
         enable = true;
         enableOffloadCmd = true;
       };
-      # DEINE BUS-IDS (Vom vorherigen Chat)
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
     };
@@ -109,76 +119,61 @@
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" "video" "adbusers" ];
     packages = with pkgs; [
-      # GUI Tools
-      kitty             # Terminal
+      kitty
       starship
-      xfce.thunar       # Datei-Manager
-      wofi              # App Launcher (Startmenü)
-      waybar            # Statusleiste
+      xfce.thunar
+      wofi
+      waybar
       playerctl
-      swaynotificationcenter # Quick Settings & Nachrichten
-      hyprlock              # Der Lockscreen
-      hypridle              # Damit der Lockscreen automatisch angeht
-      libnotify             # Damit Apps Nachrichten senden können
-      brightnessctl         # Steuert die Helligkeit
-      blueman               # Bluetooth Manager
-      networkmanagerapplet  # WLAN Manager (nm-connection- editor)
+      swaynotificationcenter
+      hyprlock
+      hypridle
+      libnotify
+      brightnessctl
+      blueman
+      networkmanagerapplet
       helix
-      nil           # Nix Language Server (für deine config.nix!)
-      python3       # Python
-      pyright       # Python Language Server
-      rust-analyzer # Rust
-      wl-clipboard  # WICHTIG für Hyprland Clipboard
+      nil
+      python3
+      pyright
+      rust-analyzer
+      wl-clipboard
       bitwarden-desktop
-
-      # --- NEU: Screen Mirroring Tool ---
       scrcpy
-      
-      # Der Zen Browser (aus dem Flake Input)
-      inputs.zen-browser.packages."${pkgs.system}".default # <-- Chrome statt Firefox
 
-      # Deine Apps
-      rclone            # Google Drive
-      bottles           # Windows Apps
+      inputs.zen-browser.packages."${pkgs.system}".default
+
+      rclone
+      bottles
       git
       pavucontrol
       swayosd
       tidal-hifi
 
-      
-      # Das Theme für den Login-Screen
       (catppuccin-sddm.override {
         flavor = "mocha";
         font  = "JetBrainsMono Nerd Font";
         loginBackground = true;
-     }) 
-   ];
+      })
+    ];
   };
 
-  # Fonts
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
     font-awesome
   ];
 
-  # Steam
   programs.steam.enable = true;
 
-   
-  # --- BESSERES TERMINAL (ZSH) ---
   programs.zsh = {
     enable = true;
     enableCompletion = true;
-    # Autosuggestions: Vorschläge basierend auf deiner History (grauer Text)
     autosuggestions.enable = true;
-    # Syntax Highlighting: Befehle werden grün (richtig) oder rot (falsch)
     syntaxHighlighting.enable = true;
   };
 
-  # Mache Zsh zur Standard-Shell für alle (oder spezifisch für dich)
   users.defaultUserShell = pkgs.zsh;
 
-  # Flakes aktivieren
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   system.stateVersion = "24.05"; 
