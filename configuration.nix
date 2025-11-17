@@ -1,9 +1,11 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs,  ... }:
 
 {
   imports =
     [ # Importiert die Hardware-Erkennung (wichtig!)
       ./hardware-configuration.nix
+      # --- Howdy EINSTELLUNG von Unstable laden ---
+      inputs.nixpkgs-unstable.nixosModules.howdy
     ];
 
   # --- BOOTLOADER ---
@@ -12,7 +14,14 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
   boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
-
+  
+  # --- Howdy PAKET von Unstable holen ---
+  nixpkgs.overlays = [
+    (final: prev: {
+      # Fügt 'howdy' zu 'pkgs' hinzu
+      howdy = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.howdy;
+    })
+  ];
 
   # --- NETZWERK & HOSTNAME ---
   networking.hostName = "nixos";
@@ -49,7 +58,15 @@
     enable = true;
     xwayland.enable = true;
   };
-  
+
+    # --- Handy-Verbindung ---
+  programs.kdeconnect = {
+    enable = true;
+  };
+
+  # --- Android Debug Bridge (für Scrcpy) ---
+  programs.adb.enable = true;
+
   # Zwingt Apps (Electron) auf Wayland
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
@@ -89,7 +106,7 @@
   # --- USER & PROGRAMME ---
   users.users.meo = { 
     isNormalUser = true;
-    extraGroups = [ "networkmanager" "wheel" "video" ];
+    extraGroups = [ "networkmanager" "wheel" "video" "adbusers" ];
     packages = with pkgs; [
       # GUI Tools
       kitty             # Terminal
@@ -113,9 +130,11 @@
       wl-clipboard  # WICHTIG für Hyprland Clipboard
       bitwarden-desktop
 
+      # --- NEU: Screen Mirroring Tool ---
+      scrcpy
       
       # Der Zen Browser (aus dem Flake Input)
-      inputs.zen-browser.packages."${system}".default    # <-- Chrome statt Firefox
+      inputs.zen-browser.packages."${pkgs.system}".default # <-- Chrome statt Firefox
 
       # Deine Apps
       rclone            # Google Drive
@@ -144,6 +163,12 @@
   # Steam
   programs.steam.enable = true;
 
+  # --- Face Unlock ---
+  services.howdy = {
+    enable = true;
+    package = pkgs.howdy; # Stellt sicher, dass das Paket installiert ist
+  };
+  
   # --- BESSERES TERMINAL (ZSH) ---
   programs.zsh = {
     enable = true;
