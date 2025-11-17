@@ -4,7 +4,6 @@
   imports =
     [ # Importiert die Hardware-Erkennung (wichtig!)
       ./hardware-configuration.nix
-      # --- Howdy EINSTELLUNG von Unstable laden ---
       inputs.nixpkgs-unstable.nixosModules.howdy
     ];
 
@@ -15,14 +14,6 @@
   boot.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
   boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
   
-  # --- Howdy PAKET von Unstable holen ---
-  nixpkgs.overlays = [
-    (final: prev: {
-      # Fügt 'howdy' zu 'pkgs' hinzu
-      howdy = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.howdy;
-    })
-  ];
-
   # --- NETZWERK & HOSTNAME ---
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
