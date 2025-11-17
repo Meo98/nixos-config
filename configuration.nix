@@ -1,36 +1,13 @@
-{ config, pkgs, inputs,  ... }:
+{ config, pkgs, inputs, ... }:
 
-let
-  # Nixpkgs-Branch mit Howdy-Modul & -Package
-  howdyRepo = builtins.fetchTarball
-    "https://api.github.com/repos/fufexan/nixpkgs/tarball/howdy";
-
-  # Paket-Set aus diesem Repo, mit gleichem System wie dein aktuelles pkgs
-  howdyPkgs = import howdyRepo {
-    system = pkgs.stdenv.hostPlatform.system;
-  };
-in
 {
   imports =
     [
-      # Importiert die Hardware-Erkennung (wichtig!)
       ./hardware-configuration.nix
-
-      # Importiert das Howdy-NixOS-Modul
-      "${howdyRepo}/nixos/modules/services/security/howdy/default.nix"
-      # Wenn du den IR-Emitter brauchst, zusätzlich:
-      # "${howdyRepo}/nixos/modules/services/misc/linux-enable-ir-emitter.nix"
+      inputs.oblichey.nixosModules.default
     ];
 
-  # Howdy-Pakete aus dem Fork in dein pkgs einhängen
-  nixpkgs.overlays = [
-    (final: prev: {
-      howdy = howdyPkgs.howdy;
-      linux-enable-ir-emitter = howdyPkgs.linux-enable-ir-emitter;
-    })
-  ];
-
-  # --- BOOTLOADER ---
+   # --- BOOTLOADER ---
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -53,9 +30,17 @@ in
   # Tastatur auf der Konsole (TTY)
   console.keyMap = "sg"; 
 
-  services.howdy = {
+    programs.oblichey = {
     enable = true;
-    device = "/dev/video0"; # ggf. anpassen, `v4l2-ctl --list-devices`
+    settings = {
+      camera = {
+        path = "/dev/video0";  # ggf. /dev/video2 o.ä. mit `v4l2-ctl --list-devices` checken
+      };
+    };
+
+    # In welchen PAM-Services Oblichey verwendet werden soll
+    # Beispiele: sudo, su, login, hyprlock etc., je nach Bedarf
+    pamServices = [ "sudo" "login" ];
   };
   
   # Tastatur im grafischen System (X11/Wayland)
