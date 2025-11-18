@@ -64,10 +64,16 @@
     xwayland.enable = true;
   };
 
+  environment.sessionVariables = rec {
+    XDG_CACHE_HOME  = "$HOME/.cache";
+    XDG_CONFIG_HOME = "$HOME/.config";
+    XDG_DATA_HOME   = "$HOME/.local/share";
+    XDG_STATE_HOME  = "$HOME/.local/state";
+    NIXOS_OZONE_WL = "1";
+  };
+
   programs.kdeconnect.enable = true;
   programs.adb.enable = true;
-
-  environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
   # --- NVIDIA TREIBER (PRIME OFFLOAD) ---
   nixpkgs.config.allowUnfree = true;
