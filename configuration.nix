@@ -4,7 +4,6 @@
   imports =
     [
       ./hardware-configuration.nix
-      inputs.oblichey.nixosModules.default
     ];
 
    # --- BOOTLOADER ---
@@ -44,31 +43,12 @@
     package = pkgs.kdePackages.sddm;
   };
 
-    programs.oblichey = {
-    enable = true;
-
-    # In welchen PAM-Services Oblichey greifen soll:
-    pamServices = [ "sudo" "login" ];
-    # später kannst du hier z.B. auch "hyprlock" reinnehmen
-
-    settings = {
-      camera = {
-        path = "/dev/video2"; # ggf. anpassen (siehe nächster Abschnitt)
-      };
-      # hier könntest du weitere Settings ergänzen, falls nötig
-    };
-  };
-
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
   };
 
-  environment.sessionVariables = rec {
-    XDG_CACHE_HOME  = "$HOME/.cache";
-    XDG_CONFIG_HOME = "$HOME/.config";
-    XDG_DATA_HOME   = "$HOME/.local/share";
-    XDG_STATE_HOME  = "$HOME/.local/state";
+  environment.sessionVariables =  {
     NIXOS_OZONE_WL = "1";
   };
 
@@ -142,6 +122,7 @@
       pavucontrol
       swayosd
       tidal-hifi
+      wasistlos
 
       (catppuccin-sddm.override {
         flavor = "mocha";
