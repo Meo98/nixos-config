@@ -30,19 +30,6 @@
   # Tastatur auf der Konsole (TTY)
   console.keyMap = "sg"; 
 
-    programs.oblichey = {
-    enable = true;
-    settings = {
-      camera = {
-        path = "/dev/video0";  # ggf. /dev/video2 o.ä. mit `v4l2-ctl --list-devices` checken
-      };
-    };
-
-    # In welchen PAM-Services Oblichey verwendet werden soll
-    # Beispiele: sudo, su, login, hyprlock etc., je nach Bedarf
-    pamServices = [ "sudo" "login" ];
-  };
-  
   # Tastatur im grafischen System (X11/Wayland)
   services.xserver.xkb = {
     layout = "ch";
@@ -55,6 +42,21 @@
     wayland.enable = true;
     theme = "catppuccin-mocha";
     package = pkgs.kdePackages.sddm;
+  };
+
+    programs.oblichey = {
+    enable = true;
+
+    # In welchen PAM-Services Oblichey greifen soll:
+    pamServices = [ "sudo" "login" ];
+    # später kannst du hier z.B. auch "hyprlock" reinnehmen
+
+    settings = {
+      camera = {
+        path = "/dev/video2"; # ggf. anpassen (siehe nächster Abschnitt)
+      };
+      # hier könntest du weitere Settings ergänzen, falls nötig
+    };
   };
 
   programs.hyprland = {
