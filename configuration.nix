@@ -123,6 +123,7 @@
       swayosd
       tidal-hifi
       wasistlos
+      whatsie
 
       (catppuccin-sddm.override {
         flavor = "mocha";
