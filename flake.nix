@@ -15,7 +15,7 @@
 
   outputs = { self, nixpkgs, nixos-cosmic, zen-browser, ... }@inputs: {
     nixosConfigurations = {
-      dein-hostname = nixpkgs.lib.nixosSystem {
+      nixos  = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         
         # WICHTIG: 'inputs' muss hier durchgereicht werden, 
