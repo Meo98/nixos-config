@@ -6,7 +6,15 @@
       ./hardware-configuration.nix
     ];
 
-   # --- BOOTLOADER ---
+  # --- BINARY CACHE (WICHTIG FÜR COSMIC) ---
+  # Damit du nicht alles selbst kompilieren musst
+  nix.settings = {
+    substituters = [ "https://cosmic.cachix.org" ];
+    trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
+    experimental-features = [ "nix-command" "flakes" ];
+  };
+
+  # --- BOOTLOADER ---
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -21,35 +29,27 @@
   time.timeZone = "Europe/Zurich"; 
   i18n.defaultLocale = "de_CH.UTF-8";
 
-  # Bluetooth und weiteres
+  # Bluetooth
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;
 
-  # Tastatur auf der Konsole (TTY)
+  # Tastatur auf der Konsole
   console.keyMap = "sg"; 
 
-  # Tastatur im grafischen System (X11/Wayland)
+  # Tastatur Layout
   services.xserver.xkb = {
     layout = "ch";
     variant = "";
   };
 
-  # --- GRAFIK & HYPRLAND ---
-  services.displayManager.sddm = {
-    enable = true;
-    wayland.enable = true;
-    theme = "catppuccin-mocha";
-    package = pkgs.kdePackages.sddm;
-  };
-
-  programs.hyprland = {
-    enable = true;
-    xwayland.enable = true;
-  };
+  # --- COSMIC DESKTOP ---
+  services.desktopManager.cosmic.enable = true;
+  services.displayManager.cosmic-greeter.enable = true;
 
   environment.sessionVariables =  {
-    NIXOS_OZONE_WL = "1";
+    NIXOS_OZONE_WL = "1"; # Zwingt Electron Apps (wie Discord/VSCode) auf Wayland
+    MOZ_ENABLE_WAYLAND = "1"; # Zwingt Firefox/Zen auf Wayland
   };
 
   programs.kdeconnect.enable = true;
@@ -92,44 +92,37 @@
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" "video" "adbusers" ];
     packages = with pkgs; [
-      kitty
+      # Standard Tools
+      kitty           # COSMIC hat auch 'cosmic-term', falls du wechseln willst
       starship
-      xfce.thunar
-      wofi
-      waybar
-      playerctl
-      swaynotificationcenter
-      hyprlock
-      hypridle
-      libnotify
+      git
+      wl-clipboard
       brightnessctl
-      blueman
-      networkmanagerapplet
+      playerctl
+      libnotify
+      
+      # COSMIC Apps (Optional, da COSMIC sie oft schon mitbringt, 
+      # aber hier kannst du sicherstellen, dass sie da sind)
+      cosmic-files    # Ersetzt Thunar
+      cosmic-term     # Ersetzt Kitty (optional)
+      cosmic-edit     # Texteditor
+      
+      # Dev
       helix
       nil
       python3
       pyright
       rust-analyzer
-      wl-clipboard
+      
+      # Apps
       bitwarden-desktop
       scrcpy
-
       inputs.zen-browser.packages."${pkgs.system}".default
-
       rclone
       bottles
-      git
       pavucontrol
-      swayosd
       tidal-hifi
       wasistlos
-      whatsie
-
-      (catppuccin-sddm.override {
-        flavor = "mocha";
-        font  = "JetBrainsMono Nerd Font";
-        loginBackground = true;
-      })
     ];
   };
 
@@ -148,8 +141,6 @@
   };
 
   users.defaultUserShell = pkgs.zsh;
-
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   system.stateVersion = "24.05"; 
 }
