@@ -1,0 +1,5 @@
+# Wir erben alles von Catppuccin Mocha
+inherits = "catppuccin_mocha"
+
+# HIER ist der Trick: Wir setzen den Hintergrund auf "nichts"
+"ui.background" = {}

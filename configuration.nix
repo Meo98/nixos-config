@@ -6,56 +6,66 @@
       ./hardware-configuration.nix
     ];
 
-  # --- BINARY CACHE (WICHTIG FÜR COSMIC) ---
-  # Damit du nicht alles selbst kompilieren musst
-  nix.settings = {
-    substituters = [ "https://cosmic.cachix.org" ];
-    trusted-public-keys = [ "cosmic.cachix.org-1:Dya9IyXD4xdBehWjrkPv6rtxpmMdRel02smYzA85dPE=" ];
-    experimental-features = [ "nix-command" "flakes" ];
-  };
-
   # --- BOOTLOADER ---
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
   boot.kernelParams = [ "nvidia.NVreg_PreserveVideoMemoryAllocations=1" ];
-  
+  boot.loader.systemd-boot.configurationLimit = 15;
+   
   # --- NETZWERK & HOSTNAME ---
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
-  # --- ZEIT & SPRACHE (SCHWEIZ) ---
+  # --- ZEIT & SPRACHE ---
   time.timeZone = "Europe/Zurich"; 
   i18n.defaultLocale = "de_CH.UTF-8";
 
-  # Bluetooth
+  # --- HARDWARE ---
   hardware.bluetooth.enable = true;
   hardware.bluetooth.powerOnBoot = true;
   services.blueman.enable = true;
 
-  # Tastatur auf der Konsole
   console.keyMap = "sg"; 
-
-  # Tastatur Layout
   services.xserver.xkb = {
     layout = "ch";
     variant = "";
   };
 
-  # --- COSMIC DESKTOP ---
-  services.desktopManager.cosmic.enable = true;
-  services.displayManager.cosmic-greeter.enable = true;
-
-  environment.sessionVariables =  {
-    NIXOS_OZONE_WL = "1"; # Zwingt Electron Apps (wie Discord/VSCode) auf Wayland
-    MOZ_ENABLE_WAYLAND = "1"; # Zwingt Firefox/Zen auf Wayland
+  # --- GRAFIK & HYPRLAND ---
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+    theme = "catppuccin-mocha";
+    package = pkgs.kdePackages.sddm;
   };
+
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+  };
+
+  # Systemweite Variablen
+  environment.sessionVariables =  {
+    NIXOS_OZONE_WL = "1";
+    MOZ_ENABLE_WAYLAND = "1";
+    XCURSOR_THEME = "Bibata-Modern-Ice";
+    XCURSOR_SIZE = "24";
+    EDITOR = "hx"; 
+    VISUAL = "hx";
+    TERMINAL = "kitty";
+  };
+  
+  # Sicherheits-Ausnahme
+  nixpkgs.config.permittedInsecurePackages = [
+    "qtwebengine-5.15.19"
+  ];
 
   programs.kdeconnect.enable = true;
   programs.adb.enable = true;
 
-  # --- NVIDIA TREIBER (PRIME OFFLOAD) ---
+  # --- NVIDIA TREIBER ---
   nixpkgs.config.allowUnfree = true;
   hardware.graphics.enable = true;
   services.xserver.videoDrivers = ["nvidia"];
@@ -67,7 +77,6 @@
     open = false;
     nvidiaSettings = true;
     package = config.boot.kernelPackages.nvidiaPackages.stable;
-
     prime = {
       offload = {
         enable = true;
@@ -87,60 +96,24 @@
     pulse.enable = true;
   };
 
-  # --- USER & PROGRAMME ---
+  # --- USER DEFINITION (Aber ohne Pakete!) ---
   users.users.meo = { 
     isNormalUser = true;
     extraGroups = [ "networkmanager" "wheel" "video" "adbusers" ];
-    packages = with pkgs; [
-      # Standard Tools
-      kitty           # COSMIC hat auch 'cosmic-term', falls du wechseln willst
-      starship
-      git
-      wl-clipboard
-      brightnessctl
-      playerctl
-      libnotify
-      
-      # COSMIC Apps (Optional, da COSMIC sie oft schon mitbringt, 
-      # aber hier kannst du sicherstellen, dass sie da sind)
-      cosmic-files    # Ersetzt Thunar
-      cosmic-term     # Ersetzt Kitty (optional)
-      cosmic-edit     # Texteditor
-      
-      # Dev
-      helix
-      nil
-      python3
-      pyright
-      rust-analyzer
-      
-      # Apps
-      bitwarden-desktop
-      scrcpy
-      inputs.zen-browser.packages."${pkgs.system}".default
-      rclone
-      bottles
-      pavucontrol
-      tidal-hifi
-      wasistlos
-    ];
+    shell = pkgs.zsh; # ZSH als Standard Shell
   };
 
+  # Fonts
   fonts.packages = with pkgs; [
+    font-awesome        
     nerd-fonts.jetbrains-mono
-    font-awesome
   ];
 
   programs.steam.enable = true;
+  
+  # Zsh Systemweit aktivieren (nötig für Pfade)
+  programs.zsh.enable = true;
 
-  programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
-  };
-
-  users.defaultUserShell = pkgs.zsh;
-
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
   system.stateVersion = "24.05"; 
 }

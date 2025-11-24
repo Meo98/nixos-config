@@ -1,0 +1,203 @@
+/* Catppuccin Mocha Palette */
+@define-color base   #1e1e2e;
+@define-color mantle #181825;
+@define-color crust  #11111b;
+@define-color text     #cdd6f4;
+@define-color subtext0 #a6adc8;
+@define-color subtext1 #bac2de;
+@define-color surface0 #313244;
+@define-color surface1 #45475a;
+@define-color surface2 #585b70;
+@define-color overlay0 #6c7086;
+@define-color overlay1 #7f849c;
+@define-color overlay2 #9399b2;
+@define-color blue      #89b4fa;
+@define-color lavender  #b4befe;
+@define-color sapphire  #74c7ec;
+@define-color sky       #89dceb;
+@define-color teal      #94e2d5;
+@define-color green     #a6e3a1;
+@define-color yellow    #f9e2af;
+@define-color peach     #fab387;
+@define-color maroon    #eba0ac;
+@define-color red       #f38ba8;
+@define-color mauve     #cba6f7;
+@define-color pink      #f5c2e7;
+@define-color flamingo  #f2cdcd;
+@define-color rosewater #f5e0dc;
+
+* {
+    border: none;
+    border-radius: 0;
+    /* Deine installierte Schriftart: */
+    font-family: "JetBrainsMono Nerd Font"; 
+    font-weight: bold;
+    font-size: 14px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: rgba(30, 30, 46, 0.5);
+    color: @text;
+}
+
+tooltip {
+    background: @base;
+    border-radius: 10px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: @crust;
+}
+
+#workspaces button {
+    padding: 5px;
+    color: @surface1;
+    margin-right: 5px;
+}
+
+#workspaces button.active {
+    color: @mauve;
+}
+
+#workspaces button.focused {
+    color: @subtext1;
+    background: @base;
+    border-radius: 10px;
+}
+
+#workspaces button.urgent {
+    color: @red;
+}
+
+#workspaces button:hover {
+    background: @surface0;
+    color: @subtext1;
+    border-radius: 10px;
+}
+
+#custom-media,
+#tray,
+#window,
+#clock,
+#battery,
+#pulseaudio,
+#network,
+#workspaces,
+#custom-powermenu,
+#custom-launcher {
+    background: @base;
+    padding: 0px 10px;
+    margin: 4px 2px; /* Abstand zwischen den Blöcken */
+    border-radius: 8px; /* Abgerundete Ecken wie in deinem Beispiel */
+    border: 1px solid @surface0;
+}
+
+/* Spezielle Farben für Module */
+
+#custom-launcher {
+    color: @blue;
+    padding-right: 15px;
+    padding-left: 10px;
+    margin-left: 5px;
+}
+
+#custom-powermenu {
+    color: @red;
+    padding-right: 15px;
+    margin-right: 5px;
+}
+
+#clock {
+    color: @rosewater;
+}
+
+#battery {
+    color: @green;
+}
+
+#battery.warning {
+    color: @yellow;
+}
+
+#battery.critical {
+    color: @red;
+}
+
+#network {
+    color: @sapphire;
+}
+
+#pulseaudio {
+    color: @pink;
+}
+
+/* --- PLAYER GRUPPE --- */
+
+#custom-prev,
+#custom-playpause,
+#custom-next,
+#custom-media,
+#custom-like {
+    background: @base;
+    color: @lavender;
+    padding: 0 10px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border: 1px solid @surface0;
+}
+
+/* Der erste Button (Zurück) bekommt links die Rundung */
+#custom-prev {
+    border-radius: 8px 0 0 8px;
+    margin-right: 0;
+    border-right: none;
+    padding-right: 5px;
+}
+
+/* Der Play/Pause Button in der Mitte */
+#custom-playpause {
+    border-radius: 0;
+    margin-left: 0;
+    margin-right: 0;
+    border-left: none;
+    border-right: none;
+    padding: 0 5px;
+}
+
+/* Der Nächste Button */
+#custom-next {
+    border-radius: 0;
+    margin-left: 0;
+    margin-right: 0;
+    border-left: none;
+    border-right: none;
+    padding: 0 5px;
+}
+
+/* Der Songtext in der Mitte */
+#custom-media {
+    border-radius: 0;
+    margin-left: 0;
+    margin-right: 0;
+    border-left: none;
+    border-right: none;
+    min-width: 100px;
+}
+
+/* Das Herz ganz rechts bekommt den Abschluss */
+#custom-like {
+    border-radius: 0 8px 8px 0;
+    margin-left: 0;
+    border-left: none;
+    color: @red; /* Herz in Rot */
+    padding-left: 5px;
+}
+
+/* Hover Effekte */
+#custom-prev:hover,
+#custom-playpause:hover,
+#custom-next:hover,
+#custom-like:hover {
+    background: @surface0;
+    color: @text;
+}
