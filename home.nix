@@ -16,7 +16,7 @@
     
     # "vivaldi" WURDE ENTFERNT (Verursachte den Fehler)
     
-    "tidal-hifi".source = ./dotfiles/tidal-hifi;
+    #"tidal-hifi".source = ./dotfiles/tidal-hifi;
   };
 
   # --- PAKETE ---
