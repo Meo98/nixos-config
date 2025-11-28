@@ -1,0 +1,104 @@
+* {
+  font-family: "JetBrainsMono Nerd Font";
+}
+
+.control-center .notification-row:focus,
+.control-center .notification-row:hover {
+  opacity: 1;
+  background: #1e1e2e;
+}
+
+.notification-row {
+  outline: none;
+  margin: 10px;
+  padding: 0;
+}
+
+.notification {
+  background: transparent;
+  padding: 0;
+  margin: 0px;
+}
+
+.notification-content {
+  background: #1e1e2e;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid #313244;
+  margin: 0;
+}
+
+.close-button {
+  background: #f38ba8;
+  color: #11111b;
+  text-shadow: none;
+  padding: 0;
+  border-radius: 100%;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+
+.close-button:hover {
+  box-shadow: none;
+  background: #eba0ac;
+  transition: all 0.2s ease-in-out;
+  border: none;
+}
+
+.notification-default-action,
+.notification-action {
+  padding: 4px;
+  margin: 0;
+  box-shadow: none;
+  background: #313244;
+  border: 1px solid #45475a;
+  color: #cdd6f4;
+}
+
+.notification-default-action:hover,
+.notification-action:hover {
+  -gtk-icon-effect: none;
+  background: #45475a;
+}
+
+.notification-default-action {
+  border-radius: 12px;
+}
+
+/* Control Center Styling */
+.control-center {
+  background: #1e1e2e;
+  border-radius: 12px;
+  border: 2px solid #313244;
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.5);
+}
+
+/* Widgets */
+.widget-title {
+  color: #cdd6f4;
+  padding: 10px 10px 5px 10px;
+  margin: 0 10px;
+  font-size: 1.5rem;
+  border-radius: 12px;
+}
+
+.widget-title > button {
+  font-size: 1rem;
+  color: #cdd6f4;
+  text-shadow: none;
+  background: #313244;
+  box-shadow: none;
+  border-radius: 12px;
+  border: none;
+  padding: 5px 10px;
+}
+
+.widget-title > button:hover {
+  background: #45475a;
+}
+
+.widget-dnd {
+  background: #313244;
+  margin: 10px;
+  border-radius: 12px;
+}

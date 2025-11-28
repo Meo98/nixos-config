@@ -1,0 +1,123 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrainsMono Nerd Font";
+    font-weight: bold;
+    font-size: 14px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: transparent; /* Wichtig für Transparenz zwischen den Modulen */
+    color: white;
+}
+
+tooltip {
+    background: #1e1e2e;
+    border-radius: 10px;
+    border-width: 2px;
+    border-style: solid;
+    border-color: #11111b;
+}
+
+/* --- MODULE STYLING --- */
+
+#workspaces {
+    background: #1e1e2e;
+    margin: 5px 5px 5px 5px;
+    padding: 0px 5px;
+    border-radius: 16px;
+    border: solid 0px #b4befe;
+}
+
+#workspaces button {
+    padding: 0px 5px;
+    margin: 0px 3px;
+    border-radius: 16px;
+    color: #cdd6f4;
+    background: transparent;
+    transition: all 0.3s ease-in-out;
+}
+
+#workspaces button.active {
+    background-color: #cba6f7; /* Aktiver Workspace Farbe */
+    color: #1e1e2e;
+    border-radius: 16px;
+    min-width: 50px;
+    background-size: 400% 400%;
+}
+
+#workspaces button:hover {
+    background-color: #f5c2e7;
+    color: #1e1e2e;
+    border-radius: 16px;
+}
+
+/* Die Module rechts und links */
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#pulseaudio,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#mpd,
+#bluetooth,
+#custom-hypridle,
+#window {
+    padding: 0 10px;
+    color: #cdd6f4;
+    border-radius: 16px;
+    background-color: #1e1e2e; /* Hintergrund der Pillen */
+    margin: 5px 0px; /* Oben/Unten Abstand für Floating Effekt */
+}
+
+#window {
+    border-radius: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* Uhr braucht etwas mehr Platz links */
+#clock {
+    color: #cba6f7;
+    margin-left: 20px;
+    margin-right: 10px;
+}
+
+/* Audio und Netzwerk in einer Gruppe optisch verbinden */
+#pulseaudio {
+    background-color: #fab387;
+    color: #1e1e2e;
+    border-radius: 16px 0px 0px 16px; /* Links rund, rechts eckig */
+    margin-right: 0px;
+}
+
+#pulseaudio.microphone {
+    background-color: #f9e2af;
+    color: #1e1e2e;
+    border-radius: 0px 16px 16px 0px; /* Links eckig, rechts rund */
+    margin-left: 0px;
+    margin-right: 10px;
+}
+
+#battery {
+    background-color: #a6e3a1;
+    color: #1e1e2e;
+    margin-right: 20px;
+}
+
+#battery.charging {
+    color: #1e1e2e;
+    background-color: #a6e3a1;
+}
+
+#network {
+    margin-right: 10px;
+}

@@ -1,0 +1,17 @@
+theme = "catppuccin_ghostty"
+
+[editor]
+line-number = "relative"       # Praktisch für Vim-Bewegungen
+true-color = true              # Wichtig für korrekte Farben
+bufferline = "multiple"        # Zeigt Tabs oben an, wenn mehrere Dateien offen sind
+
+[editor.cursor-shape]
+insert = "bar"
+normal = "block"
+select = "underline"
+
+# Macht die Statusleiste unten etwas hübscher/minimalistischer
+[editor.statusline]
+left = ["mode", "spinner"]
+center = ["file-name"]
+right = ["diagnostics", "selections", "position", "file-encoding", "file-line-ending", "file-type"]
